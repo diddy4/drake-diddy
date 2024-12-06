@@ -1,0 +1,74 @@
+gradlew genEclipseRuns   # For Eclipse users
+gradlew genIntellijRuns  # For IntelliJ users
+package com.example.mysimplemod;
+
+import com.mojang.logging.LogUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.Listener;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.EventBus;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaMod;
+
+@Mod("mysimplemod")
+public class MySimpleMod {
+    // Create a logger instance to write logs
+    private static final LogUtils LOGGER = LogUtils.getLogger();
+
+    public MySimpleMod() {
+        IEventBus modEventBus = MinecraftForge.EVENT_BUS;
+        // Register the commonSetup method for modloading
+        modEventBus.addListener(this::commonSetup);
+
+        // Register the server and client setup methods to handle different environments
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    private void commonSetup(final FMLCommonSetupEvent event) {
+        LOGGER.info("HELLO FROM COMMON SETUP");
+    }
+
+    // This event is called when the server is starting. You can use this to register server commands or game logic.
+    private void onServerStarting(ServerStartingEvent event) {
+        LOGGER.info("HELLO FROM SERVER STARTING");
+    }
+
+    // You can use SubscribeEvent and let the Event Bus discover methods to call.
+    @SubscribeEvent
+    public void onClientStarting(final net.minecraftforge.api.distmarker.Dist event) {
+        LOGGER.info("HELLO FROM CLIENT STARTING");
+    }
+
+    // This will display a message in chat when the player logs in
+    @SubscribeEvent
+    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        Minecraft.getInstance().player.sendMessage(new TextComponent("Welcome to Minecraft, " + event.getPlayer().getDisplayName().getString() + "!"), event.getPlayer().getUUID());
+    }
+
+    // Common setup for your mod
+    @SubscribeEvent
+    public static void onCommonSetup(FMLCommonSetupEvent event) {
+        LOGGER.info("HELLO FROM COMMON SETUP");
+    }
+}
+modLoader="javafml"
+loaderVersion="[40,)"
+license="All Rights Reserved"
+[[mods]]
+modId="mysimplemod"
+version="1.0.0"
+displayName="My Simple Mod"
+description='''A simple mod that greets the player when they join the world.'''
+group = 'com.example'
+archivesBaseName = 'mysimplemod'
+version = '1.0.0'
+gradlew build
+
+
