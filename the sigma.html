@@ -1,0 +1,97 @@
+pip install pygame
+import pygame
+import random
+
+# Initialize Pygame
+pygame.init()
+
+# Game settings
+screen_width = 800
+screen_height = 600
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("Minecraft-Like Game")
+clock = pygame.time.Clock()
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GREEN = (34, 177, 76)
+BROWN = (139, 69, 19)
+
+# Player setup
+player_width = 50
+player_height = 50
+player_x = screen_width // 2
+player_y = screen_height - player_height - 10
+player_speed = 5
+
+# Block setup
+block_size = 50
+blocks = []
+
+# Load fonts
+font = pygame.font.SysFont("Arial", 24)
+
+# Functions for the game
+def draw_player(x, y):
+    pygame.draw.rect(screen, BROWN, (x, y, player_width, player_height))
+
+def draw_blocks():
+    for block in blocks:
+        pygame.draw.rect(screen, GREEN, (block[0], block[1], block_size, block_size))
+
+def generate_blocks():
+    for i in range(10):
+        x = random.randint(0, screen_width - block_size)
+        y = random.randint(0, screen_height - block_size)
+        blocks.append((x, y))
+
+def check_collision(x, y):
+    for block in blocks:
+        if block[0] < x + player_width and block[0] + block_size > x and block[1] < y + player_height and block[1] + block_size > y:
+            return True
+    return False
+
+# Game loop
+running = True
+generate_blocks()
+while running:
+    screen.fill(WHITE)
+    
+    # Check for events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    
+    # Get keys pressed
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        if not check_collision(player_x - player_speed, player_y):
+            player_x -= player_speed
+    if keys[pygame.K_RIGHT]:
+        if not check_collision(player_x + player_speed, player_y):
+            player_x += player_speed
+    if keys[pygame.K_UP]:
+        if not check_collision(player_x, player_y - player_speed):
+            player_y -= player_speed
+    if keys[pygame.K_DOWN]:
+        if not check_collision(player_x, player_y + player_speed):
+            player_y += player_speed
+    
+    # Draw everything
+    draw_blocks()
+    draw_player(player_x, player_y)
+    
+    # Displaying text
+    text = font.render("Use Arrow Keys to Move", True, BLACK)
+    screen.blit(text, (10, 10))
+
+    # Update the screen
+    pygame.display.update()
+
+    # Control the game frame rate
+    clock.tick(30)
+
+# Quit pygame
+pygame.quit()
+python minecraft_like.py
